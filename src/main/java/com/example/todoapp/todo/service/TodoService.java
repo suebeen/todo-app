@@ -4,7 +4,9 @@ import com.example.todoapp.common.exception.EntityExceptionSuppliers;
 import com.example.todoapp.todo.domain.Todo;
 import com.example.todoapp.todo.domain.TodoConverter;
 import com.example.todoapp.todo.domain.TodoRepository;
-import com.example.todoapp.todo.dto.TodoDTO;
+import com.example.todoapp.todo.dto.request.TodoCreateRequestDto;
+import com.example.todoapp.todo.dto.request.TodoUpdateRequestDto;
+import com.example.todoapp.todo.dto.response.TodoDetailResponseDto;
 import com.example.todoapp.user.domain.User;
 import com.example.todoapp.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,16 +36,16 @@ public class TodoService {
     }
 
     @Transactional
-    public String createTodo(final String userId, final TodoDTO todoDto) {
+    public String createTodo(final String userId, final TodoCreateRequestDto request) {
         final User user = getUser(userId);
-        final Todo todo = todoConverter.toEntity(user, todoDto);
+        final Todo todo = todoConverter.toEntity(user, request);
         return todoRepository.save(todo).getId();
     }
 
     @Transactional
-    public void updateTodo(final String id, final TodoDTO todoDTO) {
+    public void updateTodo(final String id, final TodoUpdateRequestDto request) {
         final Todo todo = getTodo(id);
-        todo.update(todoDTO.getTitle(), todoDTO.isDone());
+        todo.update(request.getTitle(), request.isDone());
     }
 
     @Transactional
@@ -52,12 +54,12 @@ public class TodoService {
         todoRepository.delete(todo);
     }
 
-    public List<TodoDTO> findAllTodoByUser(final String userId) {
+    public List<TodoDetailResponseDto> findAllTodoByUser(final String userId) {
         final User user = getUser(userId);
         final List<Todo> todoList = todoRepository.findByUser(user);
 
         return todoList.stream()
-                .map(todoConverter::toTodoDTO)
+                .map(todoConverter::toTodoDetailResponseDto)
                 .collect(Collectors.toList());
     }
 
