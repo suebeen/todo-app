@@ -1,14 +1,18 @@
 package com.example.todoapp.user.domain;
 
+import com.example.todoapp.common.exception.EntityExceptionSuppliers;
 import com.example.todoapp.todo.domain.Todo;
+import com.example.todoapp.user.dto.request.UserUpdateRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -39,10 +43,36 @@ public class User {
     @Column(name = "password") // nullable = true : 소셜 로그인 사용 가능
     private String password;
 
+    @Column(name = "permission")
+    @Enumerated(value = EnumType.STRING)
+    private Permission permission = Permission.ROLE_USER;
+
     @Builder
     public User(final String username, final String email, final String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public void update(final PasswordEncoder passwordEncoder, final UserUpdateRequestDto request) {
+        if (!request.getPassword().isEmpty()) {
+            this.password = passwordEncoder.encode(request.getPassword());
+        }
+        this.username = request.getUsername();
+    }
+
+    public void setPermission(final Permission permission) {
+        this.permission = permission;
+    }
+
+    public boolean checkPassword(final PasswordEncoder passwordEncoder, final String password) throws Throwable {
+        if (Objects.isNull(password)) {
+            throw (Throwable) EntityExceptionSuppliers.incorrectPassword;
+        }
+        if (!passwordEncoder.matches(password, password)) {
+            throw (Throwable) EntityExceptionSuppliers.incorrectPassword;
+        } else {
+            return true;
+        }
     }
 }

@@ -15,4 +15,12 @@ public class EntityExceptionSuppliers {
     public static final Supplier<RuntimeException> todoNotFound = () -> {
         throw new IllegalArgumentException("Todo is not found.");
     };
+
+    public static final Supplier<RuntimeException> emailAlreadyExist = () -> {
+        throw new IllegalArgumentException("Email is already exist.");
+    };
+
+    public static final Supplier<RuntimeException> incorrectPassword = () -> {
+        throw new IllegalArgumentException("Passwords do not match.");
+    };
 }
