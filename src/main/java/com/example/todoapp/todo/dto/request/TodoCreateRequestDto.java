@@ -1,25 +1,23 @@
-package com.example.todoapp.todo.dto;
+package com.example.todoapp.todo.dto.request;
 
 import com.example.todoapp.common.UUID;
-import com.example.todoapp.todo.domain.Todo;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TodoDTO {
+public class TodoCreateRequestDto {
 
     @UUID(message = "Id must be in UUID format.")
     private String id;
 
     @NotBlank(message = "Title must not be blank.")
     private String title;
-
-    @NotNull(message = "Done must not be null.")
-    private boolean done;
 
 }
