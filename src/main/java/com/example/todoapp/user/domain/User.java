@@ -1,5 +1,6 @@
 package com.example.todoapp.user.domain;
 
+import com.example.todoapp.common.BaseEntity;
 import com.example.todoapp.common.exception.EntityExceptionSuppliers;
 import com.example.todoapp.todo.domain.Todo;
 import com.example.todoapp.user.dto.request.UserUpdateRequestDto;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -18,8 +20,9 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Where(clause = "is_deleted = false")
 @Entity(name = "user")
-public class User {
+public class User extends BaseEntity {
     /*
      * JPA 에서 객체의 수정은 insert-update-delete 순서
      * 변경된 자식 객체 insert, 기존의 자식 객체를 NULL 처리

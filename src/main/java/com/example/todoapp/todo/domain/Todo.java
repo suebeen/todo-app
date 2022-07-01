@@ -1,11 +1,13 @@
 package com.example.todoapp.todo.domain;
 
+import com.example.todoapp.common.BaseEntity;
 import com.example.todoapp.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -13,8 +15,9 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Where(clause = "is_deleted = false")
 @Entity(name = "todo")
-public class Todo {
+public class Todo extends BaseEntity {
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
