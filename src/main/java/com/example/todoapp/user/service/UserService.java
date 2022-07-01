@@ -34,8 +34,7 @@ public class UserService {
         if (userRepository.existsByEmail(joinRequest.getEmail())) {
             throw (Throwable) EntityExceptionSuppliers.emailAlreadyExist;
         }
-        return userRepository.save(userConverter.toEntity(joinRequest))
-                .getUserId();
+        return userRepository.save(userConverter.toEntity(joinRequest)).getUserId();
     }
 
     public User login(final String email, final String password) throws Throwable {
