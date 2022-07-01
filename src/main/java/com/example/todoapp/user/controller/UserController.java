@@ -6,6 +6,7 @@ import com.example.todoapp.user.dto.request.UserUpdateRequestDto;
 import com.example.todoapp.user.dto.response.UserFindInfoResponseDto;
 import com.example.todoapp.user.dto.response.UserLoginResponseDto;
 import com.example.todoapp.user.service.UserService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.net.URI;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
+@Api(value = "UserController")
 @RestController
 public class UserController {
 

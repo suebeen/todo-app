@@ -4,6 +4,7 @@ import com.example.todoapp.todo.dto.request.TodoCreateRequestDto;
 import com.example.todoapp.todo.dto.request.TodoUpdateRequestDto;
 import com.example.todoapp.todo.dto.response.TodoDetailResponseDto;
 import com.example.todoapp.todo.service.TodoService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/todo")
+@Api(value = "TodoController")
 @RestController
 public class TodoController {
 

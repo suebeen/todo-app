@@ -12,6 +12,10 @@ spring:
         #        show_sql: true
         format_sql: true
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 logging.level:
   org.springframework: debug
   org.springframework.web: debug
