@@ -1,5 +1,6 @@
 package com.example.todoapp.todo.controller;
 
+import com.example.todoapp.security.TokenProvider;
 import com.example.todoapp.todo.dto.request.TodoCreateRequestDto;
 import com.example.todoapp.todo.dto.request.TodoUpdateRequestDto;
 import com.example.todoapp.todo.dto.response.TodoDetailResponseDto;
@@ -7,6 +8,7 @@ import com.example.todoapp.todo.service.TodoService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,12 +23,14 @@ public class TodoController {
 
     private final TodoService todoService;
 
+    private TokenProvider tokenProvider;
+
     @PostMapping
     public ResponseEntity<Void> createTodo(
+            @AuthenticationPrincipal final String token,
             @Valid @RequestBody final TodoCreateRequestDto request
     ) {
-        // @AuthenticationPrincipal final JwtAuthentication authentication 추가 예정
-        final String userId = "";
+        final String userId = tokenProvider.validateAndGetUserId(token);
         final String todoId = todoService.createTodo(userId, request);
         return ResponseEntity.created(URI.create("/api/v1/todo/" + todoId)).build();
     }
@@ -50,9 +54,9 @@ public class TodoController {
 
     @GetMapping
     public ResponseEntity<List<TodoDetailResponseDto>> findAllTodoByUser(
+            @AuthenticationPrincipal final String token
     ) {
-        // @AuthenticationPrincipal final JwtAuthentication authentication 추가 예정
-        final String userId = "";
+        final String userId = tokenProvider.validateAndGetUserId(token);
         return ResponseEntity.ok().body(todoService.findAllTodoByUser(userId));
     }
 

@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 public class UserFindInfoResponseDto {
 
-    private String userId;
+    private Long userId;
 
     private String email;
 

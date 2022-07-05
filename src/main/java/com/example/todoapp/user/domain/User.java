@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY) // insert query 실행되는 시점에 id setting
-    private String userId;
+    private Long userId;
 
     @Column(name = "username", nullable = false)
     private String username;
