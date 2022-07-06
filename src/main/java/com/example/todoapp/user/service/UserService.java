@@ -11,6 +11,7 @@ import com.example.todoapp.user.dto.request.UserUpdateRequestDto;
 import com.example.todoapp.user.dto.response.UserFindInfoResponseDto;
 import com.example.todoapp.user.dto.response.UserLoginResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class UserService {
 
     final UserRepository userRepository;
@@ -26,17 +28,17 @@ public class UserService {
     private TokenProvider tokenProvider;
 
     @Transactional
-    public Long join(final UserJoinRequestDto joinRequest) throws Throwable {
+    public String join(final UserJoinRequestDto joinRequest) {
         // exception 처리 : 이미 가입된 이메일 존재
         if (userRepository.existsByEmail(joinRequest.getEmail())) {
-            throw (Throwable) EntityExceptionSuppliers.emailAlreadyExist;
+            throw new IllegalArgumentException("Email is already exist.");
         }
         return userRepository.save(userConverter.toEntity(joinRequest)).getUserId();
     }
 
-    public UserLoginResponseDto login(final UserLoginRequestDto loginDto) throws Throwable {
+    public UserLoginResponseDto login(final UserLoginRequestDto loginDto) {
         final User user = userRepository.findByEmail(loginDto.getEmail()).orElseThrow(EntityExceptionSuppliers.userNotFound);
-        final String token = tokenProvider.create(user);
+        final String token = TokenProvider.generateAccessToken(user);
         // user password check
         user.checkPassword(passwordEncoder, loginDto.getPassword());
         return new UserLoginResponseDto(token, user.getUserId());

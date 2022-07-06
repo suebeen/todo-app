@@ -25,16 +25,6 @@ public class TodoService {
     private final UserRepository userRepository;
     private final TodoConverter todoConverter;
 
-    public String testService() {
-        // TodoEntity 생성
-        final Todo entity = Todo.builder().title("My first todo item").build();
-        // TodoEntity 저장
-        todoRepository.save(entity);
-        // TodoEntity 검색
-        final Todo savedEntity = todoRepository.findById(entity.getId()).get();
-        return savedEntity.getTitle();
-    }
-
     @Transactional
     public String createTodo(final String userId, final TodoCreateRequestDto request) {
         final User user = getUser(userId);

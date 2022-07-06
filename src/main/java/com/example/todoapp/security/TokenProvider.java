@@ -7,43 +7,23 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Slf4j
 @Service
 public class TokenProvider {
-    private static final String SECRET_KEY = "NMA8JPctFuna59f5";
+    private static final String SECRET_KEY = "c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK";
 
-    public String create(final User user) {
-        // 기한 지금으로부터 1일로 설정
-        final Date expiryDate = Date.from(
-                Instant.now()
-                        .plus(1, ChronoUnit.DAYS));
 
-		/*
-		{ // header
-		  "alg":"HS512"
-		}.
-		{ // payload
-		  "sub":"40288093784915d201784916a40c0001",
-		  "iss": "demo app",
-		  "iat":1595733657,
-		  "exp":1596597657
-		}.
-		// SECRET_KEY를 이용해 서명한 부분
-		Nn4d1MOVLZg79sfFACTIpCPKqWmpZMZQsbNrXdJJNWkRv50_l7bPLQPwhMobT4vBOG6Q3JYjhDrKFlBSaUxZOg
-		 */
-        // JWT Token 생성
+    public static String generateAccessToken(final User user) {
+        final Date now = new Date();
+        final Date expiryDate = new Date(now.getTime() + 1000 * 60 * 30L);
         return Jwts.builder()
-                // header에 들어갈 내용 및 서명을 하기 위한 SECRET_KEY
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
-                // payload에 들어갈 내용
-                .setSubject(String.valueOf(user.getUserId())) // sub
-                .setIssuer("demo app") // iss
-                .setIssuedAt(new Date()) // iat
-                .setExpiration(expiryDate) // exp
+                .setHeaderParam("type", "JWT")
+                .setSubject(user.getUserId()) // 사용자
+                .setIssuedAt(new Date()) // 현재 시간 기반으로 생성
+                .setExpiration(expiryDate) // 만료 시간 세팅
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY) // 사용할 암호화 알고리즘, signature에 들어갈 secret 값 세팅
                 .compact();
     }
 

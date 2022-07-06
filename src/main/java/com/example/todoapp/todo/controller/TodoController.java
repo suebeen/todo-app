@@ -5,6 +5,7 @@ import com.example.todoapp.todo.dto.request.TodoCreateRequestDto;
 import com.example.todoapp.todo.dto.request.TodoUpdateRequestDto;
 import com.example.todoapp.todo.dto.response.TodoDetailResponseDto;
 import com.example.todoapp.todo.service.TodoService;
+import com.example.todoapp.user.domain.User;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +28,16 @@ public class TodoController {
 
     @PostMapping
     public ResponseEntity<Void> createTodo(
-            @AuthenticationPrincipal final String token,
+            @AuthenticationPrincipal final User user,
             @Valid @RequestBody final TodoCreateRequestDto request
     ) {
-        final String userId = tokenProvider.validateAndGetUserId(token);
-        final String todoId = todoService.createTodo(userId, request);
+        final String todoId = todoService.createTodo(user.getUserId(), request);
         return ResponseEntity.created(URI.create("/api/v1/todo/" + todoId)).build();
     }
 
     @PatchMapping("/{todoId}")
     public ResponseEntity<Void> updateTodo(
+            @AuthenticationPrincipal final User user,
             @PathVariable final String todoId,
             @Valid @RequestBody final TodoUpdateRequestDto request
     ) {
@@ -46,6 +47,7 @@ public class TodoController {
 
     @DeleteMapping("/{todoId}")
     public ResponseEntity<Void> deleteTodo(
+            @AuthenticationPrincipal final User user,
             @PathVariable final String todoId
     ) {
         todoService.deleteTodo(todoId);
@@ -54,10 +56,9 @@ public class TodoController {
 
     @GetMapping
     public ResponseEntity<List<TodoDetailResponseDto>> findAllTodoByUser(
-            @AuthenticationPrincipal final String token
+            @AuthenticationPrincipal final User user
     ) {
-        final String userId = tokenProvider.validateAndGetUserId(token);
-        return ResponseEntity.ok().body(todoService.findAllTodoByUser(userId));
+        return ResponseEntity.ok().body(todoService.findAllTodoByUser(user.getUserId()));
     }
 
 }

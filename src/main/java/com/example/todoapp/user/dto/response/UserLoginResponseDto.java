@@ -10,6 +10,6 @@ public class UserLoginResponseDto {
 
     private String token;
 
-    private Long userId;
+    private String userId;
 
 }
