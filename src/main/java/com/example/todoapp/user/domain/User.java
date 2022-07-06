@@ -1,13 +1,14 @@
 package com.example.todoapp.user.domain;
 
 import com.example.todoapp.common.BaseEntity;
-import com.example.todoapp.common.exception.EntityExceptionSuppliers;
 import com.example.todoapp.todo.domain.Todo;
 import com.example.todoapp.user.dto.request.UserUpdateRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -21,7 +22,8 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "is_deleted = false")
-@Entity(name = "user")
+@SQLDelete(sql = "UPDATE users SET is_deleted = true WHERE user_id = ?")
+@Entity(name = "users")
 public class User extends BaseEntity {
     /*
      * JPA 에서 객체의 수정은 insert-update-delete 순서
@@ -33,8 +35,8 @@ public class User extends BaseEntity {
     private final List<Todo> todos = new ArrayList<>();
 
     @Id
-    @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // insert query 실행되는 시점에 id setting
+    @GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String userId;
 
     @Column(name = "username", nullable = false)
@@ -68,14 +70,12 @@ public class User extends BaseEntity {
         this.permission = permission;
     }
 
-    public boolean checkPassword(final PasswordEncoder passwordEncoder, final String password) throws Throwable {
+    public void checkPassword(final PasswordEncoder passwordEncoder, final String password) {
         if (Objects.isNull(password)) {
-            throw (Throwable) EntityExceptionSuppliers.incorrectPassword;
+            throw new IllegalArgumentException("Password do not match.");
         }
-        if (!passwordEncoder.matches(password, password)) {
-            throw (Throwable) EntityExceptionSuppliers.incorrectPassword;
-        } else {
-            return true;
+        if (!passwordEncoder.matches(password, this.password)) {
+            throw new IllegalArgumentException("Password do not match.");
         }
     }
 }

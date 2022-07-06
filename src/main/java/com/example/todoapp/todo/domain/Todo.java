@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "is_deleted = false")
+@SQLDelete(sql = "UPDATE todo SET is_deleted = true WHERE id = ?")
 @Entity(name = "todo")
 public class Todo extends BaseEntity {
     @Id
@@ -30,7 +32,7 @@ public class Todo extends BaseEntity {
     private boolean done = false;   // boolean: 자료형이기 때문에 null값 넣을 수 없음
 
     @ManyToOne(fetch = FetchType.LAZY)  // 지연 로딩 사용으로 user객체를 매번 불러오지 x
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
